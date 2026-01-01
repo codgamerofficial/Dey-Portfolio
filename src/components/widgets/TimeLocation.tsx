@@ -140,6 +140,51 @@ export default function TimeLocation() {
         );
     }, []);
 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+
+    // Manual Pincode Search
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!searchQuery.trim()) return;
+
+        setIsSearching(true);
+        try {
+            // Nominatim Free Geocoder (Postal Code Search)
+            const res = await axios.get(
+                `https://nominatim.openstreetmap.org/search?postalcode=${searchQuery}&format=json&addressdetails=1`
+            );
+
+            if (res.data && res.data.length > 0) {
+                const target = res.data[0];
+                const newLat = parseFloat(target.lat);
+                const newLon = parseFloat(target.lon);
+                const addr = target.address;
+
+                setLocation({
+                    lat: newLat,
+                    lon: newLon,
+                    area: addr.suburb || addr.neighborhood || '',
+                    city: addr.city || addr.town || addr.village || addr.county || '',
+                    state: addr.state || '',
+                    country: addr.country || '',
+                    countryCode: addr.country_code?.toUpperCase() || '',
+                    timezone: location?.timezone || 'Manual Target',
+                });
+
+                // Refresh Weather for new target
+                fetchWeather(newLat, newLon);
+            } else {
+                alert("Target coordinates not found. Try a valid pincode.");
+            }
+        } catch (error) {
+            console.error("Targeting failed", error);
+        } finally {
+            setIsSearching(false);
+            setSearchQuery('');
+        }
+    };
+
     if (!time) return null;
 
     const formattedDate = time.toLocaleDateString('en-US', {
@@ -183,6 +228,25 @@ export default function TimeLocation() {
                 {location ? (
                     <>
                         <MapWidget lat={location.lat} lon={location.lon} />
+
+                        {/* Pincode Search HUD */}
+                        <div className="absolute top-2 right-2 z-[400]">
+                            <form onSubmit={handleSearch} className="flex items-center bg-black/80 rounded border border-[var(--neon-blue)]/50 focus-within:border-[var(--neon-blue)] transition-colors p-0.5 shadow-[0_0_10px_rgba(0,0,0,0.5)]">
+                                <span className="text-[9px] text-[var(--neon-blue)] font-bold px-1.5 animate-pulse">⌖</span>
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder={isSearching ? "LOCKING..." : "ENTER ZIPCODE"}
+                                    disabled={isSearching}
+                                    className="w-24 bg-transparent text-[9px] text-white font-mono placeholder:text-white/30 focus:outline-none uppercase"
+                                />
+                                <button type="submit" className="text-[9px] bg-[var(--neon-blue)]/20 hover:bg-[var(--neon-blue)] text-[var(--neon-blue)] hover:text-white px-1.5 py-0.5 rounded transition-all">
+                                    GO
+                                </button>
+                            </form>
+                        </div>
+
                         {/* HUD Overlays */}
                         <div className="absolute top-2 left-2 z-[400] text-[8px] font-mono text-[var(--neon-blue)] bg-black/60 px-1 rounded">
                             LAT: {location.lat.toFixed(4)}
@@ -192,7 +256,7 @@ export default function TimeLocation() {
                         </div>
                         <div className="absolute bottom-2 right-2 z-[400] flex gap-1">
                             <div className="w-1 h-1 bg-red-500 rounded-full animate-ping"></div>
-                            <span className="text-[8px] text-red-500 font-bold tracking-widest">LIVE TRACKING</span>
+                            <span className="text-[8px] text-red-500 font-bold tracking-widest">{isSearching ? 'SCANNING...' : 'LIVE TRACKING'}</span>
                         </div>
                     </>
                 ) : (
@@ -210,7 +274,7 @@ export default function TimeLocation() {
             <div className="z-10 grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-black/30 p-2 rounded border border-white/5 flex flex-col">
                     <span className="text-[var(--text-tertiary)] text-[9px] uppercase tracking-wider">Coordinates</span>
-                    <span className="text-white font-mono truncate">
+                    <span className="text-white font-mono truncate" title={`${location?.city}, ${location?.state}`}>
                         {location ? `${location.city}, ${location.countryCode}` : '---'}
                     </span>
                 </div>
@@ -219,7 +283,7 @@ export default function TimeLocation() {
                     <span className="text-[var(--text-tertiary)] text-[9px] uppercase tracking-wider">Environment</span>
                     <span className="text-white font-mono truncate flex items-center gap-2">
                         {weather ? `${getWeatherDesc(weather.weathercode)}` : 'Scanning...'}
-                        {weather && <span className="text-[8px] opacity-50">| Wind: {weather.windspeed}km/h</span>}
+                        {weather && <span className="text-[8px] opacity-50 hidden sm:inline">| {weather.windspeed}km/h</span>}
                     </span>
                 </div>
             </div>

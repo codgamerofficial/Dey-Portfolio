@@ -97,9 +97,10 @@ export default function SpiderPlayer() {
 
             // In React STRICT MODE or some routing cases, this hook can fire twice.
             // But we check `audioCtxRef.current` first.
-            const source = ctx.createMediaElementSource(mediaRef.current);
+            const source = audioCtxRef.current.createMediaElementSource(mediaRef.current);
+            sourceRef.current = source;
             source.connect(analyser);
-            analyser.connect(ctx.destination);
+            analyser.connect(audioCtxRef.current.destination);
             sourceRef.current = source;
         } catch (error) {
             console.warn("Audio Context Init Failed:", error);
@@ -139,31 +140,33 @@ export default function SpiderPlayer() {
             const radius = 60;
 
             ctx.lineWidth = 2;
-
             // Dynamic glow
             const average = dataArray.reduce((prev, curr) => prev + curr, 0) / bufferLength;
             ctx.shadowBlur = average / 5 + 5;
             ctx.shadowColor = '#ff0000'; // Neon Red
 
-            // Draw Circular Spectrum
+            // Draw Circular Spectrum with Gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#00f2ea'); // Cyan
+            gradient.addColorStop(0.5, '#ff0050'); // Red/Pink
+            gradient.addColorStop(1, '#7a00ff'); // Violet
+
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+
             // Buffer usually 128 items (fftSize 256).
             for (let i = 0; i < bufferLength; i++) {
-                const barHeight = (dataArray[i] / 255) * 80;
-
-                const r = 255;
-                const g = 0;
-                const b = barHeight * 2; // Purple hint on high volume
-
-                ctx.strokeStyle = `rgb(${r},${g},${b})`;
+                const barHeight = (dataArray[i] / 255) * 100;
 
                 // Angle
                 const angle = (i * 2 * Math.PI) / bufferLength;
 
-                const x1 = centerX + Math.cos(angle) * (radius + 5);
-                const y1 = centerY + Math.sin(angle) * (radius + 5);
-                const x2 = centerX + Math.cos(angle) * (radius + 5 + barHeight);
-                const y2 = centerY + Math.sin(angle) * (radius + 5 + barHeight);
+                const x1 = centerX + Math.cos(angle) * (radius + 10);
+                const y1 = centerY + Math.sin(angle) * (radius + 10);
+                const x2 = centerX + Math.cos(angle) * (radius + 10 + barHeight);
+                const y2 = centerY + Math.sin(angle) * (radius + 10 + barHeight);
 
+                ctx.strokeStyle = gradient;
                 ctx.beginPath();
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
@@ -171,10 +174,11 @@ export default function SpiderPlayer() {
             }
 
             // Draw Pulse Circle in center
-            if (average > 50) {
+            if (average > 40) {
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, radius + (average / 4), 0, 2 * Math.PI);
-                ctx.strokeStyle = `rgba(255, 255, 255, 0.1)`;
+                ctx.arc(centerX, centerY, radius + (average / 3), 0, 2 * Math.PI);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${average / 300})`;
+                ctx.lineWidth = 1;
                 ctx.stroke();
             }
 
@@ -231,36 +235,55 @@ export default function SpiderPlayer() {
 
     const formatTime = (secs: number) => new Date(Math.max(0, secs) * 1000).toISOString().substr(14, 5);
 
+    // Spotify Integration State
+    const [showSpotify, setShowSpotify] = useState(false);
+
     return (
         <div
             className="h-full w-full"
-            style={{ perspective: '1000px' }}
+            style={{ perspective: '1200px' }} // Deeper perspective
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             ref={containerRef}
         >
             <motion.div
-                className="glass-strong rounded-3xl p-6 h-full flex flex-col justify-between border border-[var(--glass-border)] relative overflow-hidden"
+                className="glass-strong rounded-[2rem] p-6 h-full flex flex-col justify-between border border-white/10 relative overflow-hidden bg-black/40 backdrop-blur-xl"
                 animate={{
                     rotateX: tilt.x,
                     rotateY: tilt.y,
                     boxShadow: Math.abs(tilt.x) > 0
-                        ? '0 20px 50px rgba(168,85,247,0.2)'
-                        : '0 8px 32px rgba(0,0,0,0.5)'
+                        ? '0 25px 60px -12px rgba(0,0,0,0.7), 0 0 40px rgba(var(--neon-blue-rgb), 0.2)'
+                        : '0 10px 40px -10px rgba(0,0,0,0.5)'
                 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 style={{ transformStyle: 'preserve-3d' }}
             >
+                {/* Holographic Grid Background */}
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.07] pointer-events-none mix-blend-screen" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-blue)]/5 via-transparent to-[var(--neon-purple)]/5 pointer-events-none" />
+
                 {/* Header */}
                 <div className="flex justify-between items-center z-30 transform translate-z-10">
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2 drop-shadow-md">
-                        <span className="animate-pulse text-[var(--neon-blue)]">📻</span>
-                        <span className="tracking-wider">SONIC DISK</span>
+                    <h3 className="text-xl font-bold text-white flex items-center gap-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                        <span className="relative flex h-3 w-3">
+                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isPlaying ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                            <span className={`relative inline-flex rounded-full h-3 w-3 ${isPlaying ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        </span>
+                        <span className="tracking-[0.2em] text-sm">SONIC<span className="text-[var(--neon-blue)]">LINK</span></span>
                     </h3>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                        {/* Stream Mode Toggle */}
+                        <button
+                            onClick={() => setShowSpotify(!showSpotify)}
+                            className={`p-2 rounded-full transition-all border backdrop-blur-md ${showSpotify ? 'bg-[#1DB954] border-[#1DB954] text-black shadow-[0_0_15px_#1DB954]' : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/30'}`}
+                            title="Spotify Uplink"
+                        >
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.199.78-1.38 4.199-1.261 11.341-1.02 15.72 1.56.6.36.78 1.14.42 1.74-.3.6-1.02.78-1.62.42z" /></svg>
+                        </button>
+
                         <input type="file" ref={fileInputRef} className="hidden" accept="audio/*,video/*" onChange={handleFileUpload} />
-                        <button onClick={() => fileInputRef.current?.click()} className="p-2 rounded-full bg-white/5 hover:bg-[var(--neon-blue)] hover:text-white transition-colors text-[var(--neon-blue)] border border-[var(--neon-blue)]/30 hover:shadow-[0_0_15px_var(--neon-blue)]">
+                        <button onClick={() => fileInputRef.current?.click()} className="p-2 rounded-full bg-white/5 hover:bg-[var(--neon-blue)] hover:text-white transition-colors text-[var(--neon-blue)] border border-[var(--neon-blue)]/30 hover:shadow-[0_0_15px_var(--neon-blue)] backdrop-blur-md">
                             <span className="sr-only">Upload</span>
                             ⬆️
                         </button>
@@ -268,61 +291,76 @@ export default function SpiderPlayer() {
                 </div>
 
                 {/* 3D Visualizer Stage */}
-                <div className="flex-1 flex flex-col justify-center items-center relative preserve-3d isolate">
+                <div className="flex-1 flex flex-col justify-center items-center relative preserve-3d isolate overflow-hidden py-4">
+
+                    {/* Spotify Overlay - Conditional */}
+                    <AnimatePresence>
+                        {showSpotify && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8, rotateX: 20 }}
+                                animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                                exit={{ opacity: 0, scale: 0.8, rotateX: -20 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                className="absolute inset-2 z-50 bg-black flex items-center justify-center rounded-2xl border border-[#1DB954]/50 shadow-[0_0_50px_rgba(29,185,84,0.3)] overflow-hidden"
+                            >
+                                <iframe
+                                    src="https://open.spotify.com/embed/artist/4EXTUyxQQ2xYoiCyhDGBwH?utm_source=generator&theme=0"
+                                    width="100%"
+                                    height="100%"
+                                    frameBorder="0"
+                                    allowFullScreen
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                    loading="lazy"
+                                />
+                                <button
+                                    onClick={() => setShowSpotify(false)}
+                                    className="absolute top-4 right-4 text-white/50 hover:text-white bg-black/50 rounded-full p-1"
+                                >✕</button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Canvas Overlay */}
                     <canvas
                         ref={canvasRef}
-                        width={400}
-                        height={300}
-                        className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-90 mix-blend-screen"
+                        width={600}
+                        height={400}
+                        className="absolute inset-0 w-full h-full pointer-events-none z-10 mix-blend-screen opacity-100"
                     />
 
                     {/* Central Entity */}
-                    <div className="relative w-48 h-48 md:w-56 md:h-56 flex items-center justify-center translate-z-20 group">
+                    <div className={`relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center translate-z-20 group transition-all duration-500 ${showSpotify ? 'scale-[0.8] opacity-0 blur-xl translate-y-20' : ''}`}>
 
-                        {currentTrack.type === 'video' ? (
-                            <video
-                                ref={mediaRef}
-                                className="w-full h-full object-cover rounded-2xl shadow-[0_0_50px_rgba(255,0,0,0.3)] border-2 border-[var(--neon-blue)] relative z-20"
-                                onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)}
-                                onEnded={nextTrack}
-                                src={currentTrack.src}
-                                muted={false}
-                            />
-                        ) : (
-                            <>
-                                {currentTrack.type !== 'mock' && (
-                                    <audio
-                                        ref={mediaRef as any}
-                                        className="hidden"
-                                        crossOrigin="anonymous"
-                                        onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)}
-                                        onEnded={nextTrack}
-                                    />
-                                )}
+                        {/* Spinning Disc */}
+                        <motion.div
+                            className="w-full h-full rounded-full bg-black border-[3px] border-white/20 flex items-center justify-center relative shadow-[0_0_60px_rgba(0,242,234,0.15)] z-20 overflow-hidden"
+                            animate={{ rotate: isPlaying ? 360 : 0 }}
+                            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                        >
+                            {/* Album Art Gradient */}
+                            <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-black via-gray-900 to-[#1a1a1a] flex items-center justify-center">
+                                {/* Vinyl Grooves */}
+                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.9)' }} />
+                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.8)' }} />
+                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.6)' }} />
 
-                                <motion.div
-                                    className="w-full h-full rounded-full bg-black border-4 border-[var(--neon-blue)] flex items-center justify-center relative shadow-[0_0_50px_rgba(255,0,0,0.5)] z-20"
-                                    animate={{ rotate: isPlaying ? 360 : 0 }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                >
-                                    <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-gray-900 to-black overflow-hidden flex items-center justify-center">
-                                        <div className="w-full h-full bg-[url('/grid.svg')] opacity-20" />
-                                        <div className="text-6xl filter drop-shadow-[0_0_10px_white]">
-                                            {currentTrack.type === 'mock' ? '🕷️' : '🔊'}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </>
-                        )}
+                                <div className="text-5xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] relative z-10 animate-pulse-slow">
+                                    {currentTrack.type === 'mock' ? '🕷️' : '🎵'}
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Back Glow */}
+                        <div className="absolute inset-0 rounded-full bg-[var(--neon-blue)] blur-[80px] opacity-20 animate-pulse" />
                     </div>
                 </div>
 
                 {/* Track Info */}
-                <div className="text-center z-30 mb-4 transform translate-z-10 bg-black/40 backdrop-blur px-4 py-2 rounded-xl">
-                    <h2 className="text-2xl font-bold text-white mb-1 truncate drop-shadow-md">{currentTrack.title}</h2>
-                    <p className="text-[var(--neon-blue)] text-sm tracking-widest uppercase font-mono">{currentTrack.artist}</p>
+                <div className="text-center z-30 mb-6 transform translate-z-10 relative">
+                    <div className="inline-block px-6 py-2 rounded-2xl bg-black/40 backdrop-blur-md border border-white/5 shadow-lg">
+                        <h2 className="text-xl font-bold text-white mb-0.5 truncate tracking-wide drop-shadow-md">{currentTrack.title}</h2>
+                        <p className="text-[var(--neon-blue)] text-xs tracking-[0.2em] uppercase font-bold opacity-80">{currentTrack.artist}</p>
+                    </div>
                 </div>
 
                 {/* Controls */}
