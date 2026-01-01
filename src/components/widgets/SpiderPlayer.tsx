@@ -293,9 +293,12 @@ export default function SpiderPlayer() {
                         </button>
 
                         <input type="file" ref={fileInputRef} className="hidden" accept="audio/*,video/*" onChange={handleFileUpload} />
-                        <button onClick={() => fileInputRef.current?.click()} className="p-2 rounded-full bg-white/5 hover:bg-[var(--neon-blue)] hover:text-white transition-colors text-[var(--neon-blue)] border border-[var(--neon-blue)]/30 hover:shadow-[0_0_15px_var(--neon-blue)] backdrop-blur-md">
-                            <span className="sr-only">Upload</span>
-                            ⬆️
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-[var(--neon-blue)] hover:text-white transition-all text-[var(--neon-blue)] border border-[var(--neon-blue)]/30 hover:shadow-[0_0_15px_var(--neon-blue)] backdrop-blur-md group"
+                        >
+                            <span className="text-[10px] font-bold tracking-widest group-hover:tracking-[0.15em] transition-all">TAP TO UPLOAD VIBES</span>
+                            <span className="text-xs">⬆️</span>
                         </button>
                     </div>
                 </div>
