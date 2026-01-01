@@ -20,7 +20,7 @@ export default function SonicLink() {
                     transition={{ duration: 0.8 }}
                     className="relative h-[450px] w-full order-2 lg:order-1"
                 >
-                    <SpiderPlayer />
+                    <SpiderPlayer key="sonic-sys-v2" />
                 </motion.div>
 
                 <motion.div
