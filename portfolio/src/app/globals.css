@@ -1,0 +1,395 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ==================== DESIGN TOKENS ==================== */
+:root {
+  /* Colors - Black & Red Theme */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0202;
+  --bg-tertiary: #140505;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(20, 0, 0, 0.7);
+  --glass-border: rgba(255, 0, 0, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(255, 0, 0, 0.1);
+
+  /* Neon Accents (Mapped to Red tones) */
+  --neon-blue: #ff0000;
+  /* Primary Bright Red */
+  --neon-purple: #990000;
+  /* Deep Crimson */
+  --neon-pink: #ff4444;
+  /* Light Red/Pinkish */
+  --neon-cyan: #ff1a1a;
+  /* Vivid Red */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #ff0000 0%, #990000 100%);
+  --gradient-secondary: linear-gradient(135deg, #ff4444 0%, #990000 100%);
+  --gradient-accent: linear-gradient(135deg, #ff1a1a 0%, #ff0000 100%);
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #9ca3af;
+
+  /* Spacing */
+  --section-padding: 120px;
+  --container-max: 1400px;
+
+  /* Animation */
+  --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:root[data-theme='light'] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+  --text-primary: #000000;
+  --text-secondary: #374151;
+  --text-tertiary: #6b7280;
+
+  /* Adjust Red Accents for Light Mode readability */
+  --neon-blue: #d90429;
+  --neon-purple: #8d99ae;
+  /* Muted gray-blue or keep red? Keep red theme but maybe darker */
+  --neon-purple: #6a040f;
+  --neon-pink: #ef233c;
+  --neon-cyan: #d00000;
+}
+
+/* ==================== GLOBAL STYLES ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==================== CUSTOM SCROLLBAR ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--neon-blue);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-purple);
+}
+
+/* ==================== SELECTION ==================== */
+::selection {
+  background: var(--neon-blue);
+  color: var(--bg-primary);
+}
+
+::-moz-selection {
+  background: var(--neon-blue);
+  color: var(--bg-primary);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: rgba(17, 17, 24, 0.8);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: 16px;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 2px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3),
+    0 0 40px rgba(255, 0, 0, 0.2),
+    0 0 60px rgba(255, 0, 0, 0.1);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 20px rgba(153, 0, 0, 0.3),
+    0 0 40px rgba(153, 0, 0, 0.2),
+    0 0 60px rgba(153, 0, 0, 0.1);
+}
+
+/* ==================== SPIDER-VERSE AESTHETICS ==================== */
+.spider-bg {
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 0%, #000 100%),
+    radial-gradient(#1a0505 15%, transparent 16%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 0, 0, 0.05) 10px, rgba(255, 0, 0, 0.05) 20px);
+  background-size: 100% 100%, 30px 30px, 100% 100%;
+}
+
+.halftone-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.5;
+}
+
+/* Comic Border Effect */
+.comic-border {
+  border: 3px solid #ff0000;
+  box-shadow: 4px 4px 0px #990000;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.comic-border:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #ff0000;
+}
+
+/* Glitch Animation */
+@keyframes glitch {
+  0% {
+    text-shadow: 2px 2px 0px #00ffff, -2px -2px 0px #ff0000;
+  }
+
+  25% {
+    text-shadow: -2px 2px 0px #00ffff, 2px -2px 0px #ff0000;
+  }
+
+  50% {
+    text-shadow: 2px -2px 0px #00ffff, -2px 2px 0px #ff0000;
+  }
+
+  75% {
+    text-shadow: -2px -2px 0px #00ffff, 2px 2px 0px #ff0000;
+  }
+
+  100% {
+    text-shadow: 2px 2px 0px #00ffff, -2px -2px 0px #ff0000;
+  }
+}
+
+.glitch-text:hover {
+  animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  color: #fff;
+}
+
+/* Spider-Sense Vibration */
+.spider-sense {
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+}
+
+h2 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+h3 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+/* ==================== CONTAINER ==================== */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ==================== SECTION ==================== */
+.section {
+  padding: var(--section-padding) 0;
+  position: relative;
+}
+
+/* ==================== SMOOTH TRANSITIONS ==================== */
+a,
+button,
+input,
+textarea {
+  transition: all 0.3s var(--transition-smooth);
+}
+
+/* ==================== FOCUS STATES ==================== */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--neon-blue);
+  outline-offset: 4px;
+}
+
+/* ==================== LOADING STATES ==================== */
+.loading {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 80px;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+}
