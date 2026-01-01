@@ -83,29 +83,72 @@ export default function SpiderPlayer() {
 
     // Initialize Web Audio API
     const initAudioContext = () => {
-        if (!mediaRef.current || currentTrack.type === 'mock' || audioCtxRef.current) return;
+        if (!mediaRef.current || currentTrack.type === 'mock') return;
 
         try {
+            // Check if context already exists
             const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-            const ctx = new AudioContext();
-            audioCtxRef.current = ctx;
+            if (!audioCtxRef.current) {
+                audioCtxRef.current = new AudioContext();
+            }
 
-            const analyser = ctx.createAnalyser();
-            analyser.fftSize = 256;
-            analyser.smoothingTimeConstant = 0.8;
-            analyserRef.current = analyser;
+            // Resume if suspended (browsers auto-suspend)
+            if (audioCtxRef.current.state === 'suspended') {
+                audioCtxRef.current.resume();
+            }
 
-            // In React STRICT MODE or some routing cases, this hook can fire twice.
-            // But we check `audioCtxRef.current` first.
-            const source = audioCtxRef.current.createMediaElementSource(mediaRef.current);
-            sourceRef.current = source;
-            source.connect(analyser);
-            analyser.connect(audioCtxRef.current.destination);
-            sourceRef.current = source;
+            // Create source node ONLY ONCE
+            if (!sourceRef.current) {
+                // IMPORTANT: For local blobs, crossOrigin isn't needed but for external URLs it is
+                // mediaRef.current.crossOrigin = "anonymous"; 
+
+                const source = audioCtxRef.current.createMediaElementSource(mediaRef.current);
+                sourceRef.current = source;
+
+                const analyser = audioCtxRef.current.createAnalyser();
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.8;
+                analyserRef.current = analyser;
+
+                source.connect(analyser);
+                analyser.connect(audioCtxRef.current.destination);
+            }
         } catch (error) {
-            console.warn("Audio Context Init Failed:", error);
+            console.warn("Audio/Visualizer Init Error:", error);
         }
     };
+
+    // Controls Logic
+    const togglePlay = async () => {
+        if (currentTrack.type === 'mock') {
+            setIsPlaying(!isPlaying);
+        } else {
+            if (mediaRef.current) {
+                // Ensure Context is Ready
+                initAudioContext();
+
+                // Double check resume state
+                if (audioCtxRef.current?.state === 'suspended') {
+                    await audioCtxRef.current.resume();
+                }
+
+                if (isPlaying) {
+                    mediaRef.current.pause();
+                } else {
+                    try {
+                        await mediaRef.current.play();
+                    } catch (e) {
+                        console.error("Playback Failed:", e);
+                        // Fallback UI or Alert
+                    }
+                }
+                setIsPlaying(!isPlaying);
+            }
+        }
+    };
+
+    const nextTrack = () => { setCurrentTrackIndex((p) => (p + 1) % playlist.length); setIsPlaying(true); };
+    const prevTrack = () => { setCurrentTrackIndex((p) => (p - 1 + playlist.length) % playlist.length); setIsPlaying(true); };
 
     // Visualizer Loop
     useEffect(() => {
@@ -136,16 +179,8 @@ export default function SpiderPlayer() {
 
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            // Radius should match the video container somewhat
             const radius = 60;
 
-            ctx.lineWidth = 2;
-            // Dynamic glow
-            const average = dataArray.reduce((prev, curr) => prev + curr, 0) / bufferLength;
-            ctx.shadowBlur = average / 5 + 5;
-            ctx.shadowColor = '#ff0000'; // Neon Red
-
-            // Draw Circular Spectrum with Gradient
             const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             gradient.addColorStop(0, '#00f2ea'); // Cyan
             gradient.addColorStop(0.5, '#ff0050'); // Red/Pink
@@ -154,11 +189,8 @@ export default function SpiderPlayer() {
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
 
-            // Buffer usually 128 items (fftSize 256).
             for (let i = 0; i < bufferLength; i++) {
                 const barHeight = (dataArray[i] / 255) * 100;
-
-                // Angle
                 const angle = (i * 2 * Math.PI) / bufferLength;
 
                 const x1 = centerX + Math.cos(angle) * (radius + 10);
@@ -173,7 +205,8 @@ export default function SpiderPlayer() {
                 ctx.stroke();
             }
 
-            // Draw Pulse Circle in center
+            // Dynamic Pulse
+            const average = dataArray.reduce((prev, curr) => prev + curr, 0) / bufferLength;
             if (average > 40) {
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius + (average / 3), 0, 2 * Math.PI);
@@ -191,29 +224,6 @@ export default function SpiderPlayer() {
             if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
         }
     }, [isPlaying, currentTrack]);
-
-
-    // Controls Logic
-    const togglePlay = async () => {
-        if (currentTrack.type === 'mock') {
-            setIsPlaying(!isPlaying);
-        } else {
-            if (mediaRef.current) {
-                if (!audioCtxRef.current) initAudioContext();
-
-                if (audioCtxRef.current?.state === 'suspended') {
-                    await audioCtxRef.current.resume();
-                }
-
-                if (isPlaying) mediaRef.current.pause();
-                else mediaRef.current.play();
-                setIsPlaying(!isPlaying);
-            }
-        }
-    };
-
-    const nextTrack = () => { setCurrentTrackIndex((p) => (p + 1) % playlist.length); setIsPlaying(true); };
-    const prevTrack = () => { setCurrentTrackIndex((p) => (p - 1 + playlist.length) % playlist.length); setIsPlaying(true); };
 
     useEffect(() => {
         if (currentTrack.type !== 'mock' && mediaRef.current) {
@@ -331,24 +341,32 @@ export default function SpiderPlayer() {
                     {/* Central Entity */}
                     <div className={`relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center translate-z-20 group transition-all duration-500 ${showSpotify ? 'scale-[0.8] opacity-0 blur-xl translate-y-20' : ''}`}>
 
-                        {/* Spinning Disc */}
-                        <motion.div
-                            className="w-full h-full rounded-full bg-black border-[3px] border-white/20 flex items-center justify-center relative shadow-[0_0_60px_rgba(0,242,234,0.15)] z-20 overflow-hidden"
-                            animate={{ rotate: isPlaying ? 360 : 0 }}
-                            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                        >
-                            {/* Album Art Gradient */}
-                            <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-black via-gray-900 to-[#1a1a1a] flex items-center justify-center">
-                                {/* Vinyl Grooves */}
-                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.9)' }} />
-                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.8)' }} />
-                                <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.6)' }} />
-
-                                <div className="text-5xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] relative z-10 animate-pulse-slow">
-                                    {currentTrack.type === 'mock' ? '🕷️' : '🎵'}
-                                </div>
+                        {currentTrack.type === 'video' ? (
+                            <div className="w-full h-full rounded-full overflow-hidden border-[3px] border-[var(--neon-blue)] relative z-20 shadow-[0_0_30px_rgba(0,242,234,0.3)] bg-black">
+                                <video ref={mediaRef} className="w-full h-full object-cover" onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)} onEnded={nextTrack} src={currentTrack.src} muted={false} playsInline />
                             </div>
-                        </motion.div>
+                        ) : (
+                            <>
+                                {currentTrack.type !== 'mock' && <audio ref={mediaRef as any} className="hidden" crossOrigin="anonymous" onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)} onEnded={nextTrack} />}
+                                <motion.div
+                                    className="w-full h-full rounded-full bg-black border-[3px] border-white/20 flex items-center justify-center relative shadow-[0_0_60px_rgba(0,242,234,0.15)] z-20 overflow-hidden"
+                                    animate={{ rotate: isPlaying ? 360 : 0 }}
+                                    transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                                >
+                                    {/* Album Art Gradient */}
+                                    <div className="absolute inset-1 rounded-full bg-gradient-to-tr from-black via-gray-900 to-[#1a1a1a] flex items-center justify-center">
+                                        {/* Vinyl Grooves */}
+                                        <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.9)' }} />
+                                        <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.8)' }} />
+                                        <div className="absolute inset-0 rounded-full border border-white/5" style={{ transform: 'scale(0.6)' }} />
+
+                                        <div className="text-5xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] relative z-10 animate-pulse-slow">
+                                            {currentTrack.type === 'mock' ? '🕷️' : '🎵'}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </>
+                        )}
 
                         {/* Back Glow */}
                         <div className="absolute inset-0 rounded-full bg-[var(--neon-blue)] blur-[80px] opacity-20 animate-pulse" />
