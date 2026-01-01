@@ -52,6 +52,30 @@ export default function SonicLink() {
                             <span key={fmt} className="px-3 py-1 bg-white/5 rounded text-xs font-mono text-[var(--text-tertiary)] hover:bg-white/10">{fmt}</span>
                         ))}
                     </div>
+
+                    {/* Spotify Embed */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="mt-8 w-full glass rounded-2xl overflow-hidden hover:shadow-[0_0_30px_rgba(29,185,84,0.3)] transition-all duration-500 border border-[#1DB954]/20 group"
+                    >
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-[#1DB954]/5 group-hover:bg-[#1DB954]/10 transition-colors pointer-events-none" />
+                            <iframe
+                                style={{ borderRadius: '12px' }}
+                                src="https://open.spotify.com/embed/artist/4EXTUyxQQ2xYoiCyhDGBwH?utm_source=generator&theme=0"
+                                width="100%"
+                                height="352"
+                                frameBorder="0"
+                                allowFullScreen
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"
+                                className="relative z-10"
+                            />
+                        </div>
+                    </motion.div>
                 </motion.div>
             </div>
         </section>
