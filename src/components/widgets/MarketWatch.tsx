@@ -8,7 +8,17 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Asset Definitions
-const MARKETS = {
+// Asset Definitions
+interface Asset {
+    id: string;
+    symbol: string;
+    name: string;
+    type: string;
+    isReal: boolean;
+    base?: number;
+}
+
+const MARKETS: Record<'CRYPTO' | 'INDIAN' | 'US', Asset[]> = {
     CRYPTO: [
         { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', type: 'Crypto', isReal: true },
         { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', type: 'Crypto', isReal: true },
@@ -38,7 +48,7 @@ interface MarketData {
 
 export default function MarketWatch() {
     const [category, setCategory] = useState<'CRYPTO' | 'INDIAN' | 'US'>('INDIAN');
-    const [activeAsset, setActiveAsset] = useState(MARKETS['INDIAN'][0]);
+    const [activeAsset, setActiveAsset] = useState<Asset>(MARKETS['INDIAN'][0]);
 
     // Data State
     const [data, setData] = useState<MarketData[]>([]);
@@ -173,8 +183,8 @@ export default function MarketWatch() {
                         key={asset.id}
                         onClick={() => setActiveAsset(asset)}
                         className={`px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap border transition-all ${activeAsset.id === asset.id
-                                ? 'bg-[var(--neon-blue)] border-[var(--neon-blue)] text-black'
-                                : 'border-white/10 text-[var(--text-secondary)] hover:border-white/30'
+                            ? 'bg-[var(--neon-blue)] border-[var(--neon-blue)] text-black'
+                            : 'border-white/10 text-[var(--text-secondary)] hover:border-white/30'
                             }`}
                     >
                         {asset.symbol}
@@ -237,7 +247,7 @@ export default function MarketWatch() {
                         <Tooltip
                             contentStyle={{ backgroundColor: '#000', border: '1px solid #333' }}
                             itemStyle={{ color: '#fff' }}
-                            formatter={(value: number) => [value.toFixed(2), 'Price']}
+                            formatter={(value: any) => [Number(value).toFixed(2), 'Price']}
                             labelStyle={{ display: 'none' }}
                         />
                     </ComposedChart>
