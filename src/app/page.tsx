@@ -7,7 +7,7 @@ import Projects from '@/components/sections/Projects';
 import SatelliteUplink from '@/components/sections/SatelliteUplink';
 import MarketCommand from '@/components/sections/MarketCommand';
 import BioLink from '@/components/sections/BioLink';
-import SonicLink from '@/components/sections/SonicLink';
+import FeatureHub from '@/components/sections/FeatureHub';
 import Contact from '@/components/sections/Contact';
 
 export default function Home() {
@@ -20,11 +20,8 @@ export default function Home() {
       <Experience />
       <Projects />
 
-      {/* Exclusive Feature Sections */}
-      <SatelliteUplink />
-      <MarketCommand />
-      <BioLink />
-      <SonicLink />
+      {/* Feature Nexus */}
+      <FeatureHub />
 
       <Contact />
     </main>
