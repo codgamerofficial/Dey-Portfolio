@@ -83,13 +83,13 @@ export default function PDFMatrix() {
             if (activeTool === 'merge') {
                 const mergedPdf = await PDFDocument.create();
                 for (const file of files) {
-                    const arrayBuffer = await file.arrayBuffer();
+                    const arrayBuffer = await file.arrayBuffer() as ArrayBuffer;
                     const pdf = await PDFDocument.load(arrayBuffer);
                     const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                     copiedPages.forEach((page) => mergedPdf.addPage(page));
                 }
                 const pdfBytes = await mergedPdf.save();
-                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
                 setResultUrl(URL.createObjectURL(blob));
             }
             else if (activeTool === 'jpg-pdf') {
