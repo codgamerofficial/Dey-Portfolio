@@ -42,26 +42,29 @@
   --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+:root[data-theme='earth-65'],
 :root[data-theme='light'] {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
+  --bg-primary: #f5f5fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eef2f6;
 
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 242, 234, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 242, 234, 0.15);
 
-  --text-primary: #000000;
-  --text-secondary: #374151;
-  --text-tertiary: #6b7280;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --text-tertiary: #8a8a9a;
 
-  /* Adjust Red Accents for Light Mode readability */
-  --neon-blue: #d90429;
-  --neon-purple: #8d99ae;
-  /* Muted gray-blue or keep red? Keep red theme but maybe darker */
-  --neon-purple: #6a040f;
-  --neon-pink: #ef233c;
-  --neon-cyan: #d00000;
+  /* Earth-65 (Gwen) Palette: Cyan, Pink, White */
+  --neon-blue: #00f2ea;
+  /* Cyan */
+  --neon-purple: #ff0050;
+  /* Magenta/Pink */
+  --neon-pink: #ff0050;
+  --neon-cyan: #00f2ea;
+
+  --gradient-primary: linear-gradient(135deg, #00f2ea 0%, #ff0050 100%);
 }
 
 /* ==================== GLOBAL STYLES ==================== */
