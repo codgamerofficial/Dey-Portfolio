@@ -54,6 +54,8 @@ import SpiderCursor from "@/components/ui/SpiderCursor";
 
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
+import SeasonalEffects from "@/components/ui/SeasonalEffects";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +69,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`} suppressHydrationWarning>
         <ThemeToggle />
+        <SeasonalEffects />
         <SpiderCursor />
         {/* Halftone Overlay for Spider-Verse Feel */}
         <div className="halftone-overlay pointer-events-none" />
