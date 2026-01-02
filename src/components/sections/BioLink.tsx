@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import FitnessTracker from '../widgets/FitnessTracker';
+import DigitalID from '../widgets/DigitalID';
 
 export default function BioLink() {
     return (
@@ -36,15 +37,18 @@ export default function BioLink() {
                     </button>
                 </motion.div>
 
-                {/* Widget */}
+                {/* Widget Area */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, type: "spring" }}
-                    className="relative h-[400px] w-full"
+                    className="flex flex-col gap-8"
                 >
                     <FitnessTracker />
+                    <div className="relative z-10">
+                        <DigitalID />
+                    </div>
                 </motion.div>
             </div>
         </section>

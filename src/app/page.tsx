@@ -4,9 +4,7 @@ import About from '@/components/sections/About';
 import Skills from '@/components/sections/Skills';
 import Experience from '@/components/sections/Experience';
 import Projects from '@/components/sections/Projects';
-import SatelliteUplink from '@/components/sections/SatelliteUplink';
-import MarketCommand from '@/components/sections/MarketCommand';
-import BioLink from '@/components/sections/BioLink';
+import IdentityVerification from '@/components/sections/IdentityVerification';
 import FeatureHub from '@/components/sections/FeatureHub';
 import Contact from '@/components/sections/Contact';
 
@@ -15,6 +13,7 @@ export default function Home() {
     <main className="relative">
       <Hero />
       <TechLoop />
+      <IdentityVerification />
       <About />
       <Skills />
       <Experience />
