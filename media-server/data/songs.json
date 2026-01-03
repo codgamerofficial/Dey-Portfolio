@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "4d662eee-8217-471e-a2cd-31761e849736",
+    "title": "Millionaire Bangali",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/4d662eee-8217-471e-a2cd-31761e849736.mp3",
+    "source": "UPLOAD"
+  }
+]

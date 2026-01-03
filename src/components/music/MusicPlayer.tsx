@@ -82,8 +82,14 @@ export default function MusicPlayer() {
                 <div className="max-w-7xl mx-auto bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-6 shadow-2xl">
                     {/* Track Info */}
                     <div className="flex items-center gap-4 w-1/4">
-                        <div className="w-14 h-14 rounded-lg overflow-hidden relative group">
-                            <img src={currentTrack.coverUrl} alt={currentTrack.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="w-14 h-14 rounded-lg overflow-hidden relative group bg-zinc-800 flex items-center justify-center">
+                            {currentTrack.coverUrl ? (
+                                <img src={currentTrack.coverUrl} alt={currentTrack.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            ) : (
+                                <div className="text-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+                                </div>
+                            )}
                             <div className="absolute inset-0 bg-black/20" />
                         </div>
                         <div className="overflow-hidden">

@@ -57,9 +57,9 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }: Upload
             setTitle('');
             setArtist('');
             setFile(null);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setError('Failed to upload song. Please try again.');
+            setError(`Upload failed: ${err.message || 'Unknown error'}`);
         } finally {
             setIsUploading(false);
         }
