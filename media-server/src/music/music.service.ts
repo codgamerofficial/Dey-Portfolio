@@ -28,10 +28,34 @@ export class MusicService {
         };
     }
 
+    private async getAudiusHost(): Promise<string> {
+        try {
+            const { data } = await axios.get('https://api.audius.co');
+            if (data.data && data.data.length > 0) {
+                return data.data[0];
+            }
+            return 'https://discoveryprovider.audius.co'; // Fallback
+        } catch (e) {
+            console.error('Failed to resolve Audius Host', e);
+            return 'https://discoveryprovider.audius.co';
+        }
+    }
+
     private async searchAudius(query: string) {
         try {
-            const { data } = await axios.get(`https://discoveryprovider.audius.co/v1/tracks/search?query=${query}&app_name=SONIC_NEXUS`);
-            return data.data;
+            const host = await this.getAudiusHost();
+            const { data } = await axios.get(`${host}/v1/tracks/search?query=${encodeURIComponent(query)}&app_name=SONIC_NEXUS`);
+
+            // Transform to our Track interface
+            return data.data.map((track: any) => ({
+                id: track.id,
+                title: track.title,
+                artist: track.user.name,
+                album: 'Single', // Audius tracks are often singles
+                coverUrl: track.artwork ? track.artwork['480x480'] : null,
+                duration: track.duration,
+                source: 'AUDIUS'
+            }));
         } catch (e) {
             console.error('Audius Error', e);
             return [];
