@@ -14,7 +14,10 @@ export class MusicController {
 
     @Get('stream/:id')
     async stream(@Param('id') id: string, @Res() res: Response) {
-        // Proxy stream implementation
+        res.set({
+            'Content-Type': 'audio/mp4',
+            'Transfer-Encoding': 'chunked',
+        });
         const stream = await this.musicService.getStream(id);
         stream.pipe(res);
     }
