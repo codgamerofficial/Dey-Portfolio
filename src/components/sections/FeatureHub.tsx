@@ -33,11 +33,11 @@ const FEATURES = [
         border: 'border-purple-400/30'
     },
     {
-        id: 'sonic',
-        title: 'Sonic Link',
-        desc: 'Immersive audio-visual experience with Spider-Verse aesthetics.',
+        id: 'music',
+        title: 'Sonic Nexus',
+        desc: 'Immersive high-fidelity audio streaming platform.',
         icon: Music,
-        href: '/sonic',
+        href: '/music',
         color: 'text-pink-400',
         border: 'border-pink-400/30'
     },

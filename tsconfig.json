@@ -38,6 +38,7 @@
   ],
   "exclude": [
     "node_modules",
-    "prompt-nexus"
+    "prompt-nexus",
+    "media-server"
   ]
 }
