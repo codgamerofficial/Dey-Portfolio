@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Param, Res } from '@nestjs/common';
+
+import { Controller, Get, Post, Query, UseInterceptors, UploadedFile, Body } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { MusicService } from './music.service';
-import { Response } from 'express';
 
 @Controller('music')
 export class MusicController {
@@ -8,17 +9,19 @@ export class MusicController {
 
     @Get('search')
     async search(@Query('q') query: string) {
-        if (!query) return { error: 'Query required' };
-        return this.musicService.searchAll(query);
+        // Return both local and potential external search results
+        // For now, focusing on local uploads as requested
+        return this.musicService.search(query);
     }
 
-    @Get('stream/:id')
-    async stream(@Param('id') id: string, @Res() res: Response) {
-        res.set({
-            'Content-Type': 'audio/mp4',
-            'Transfer-Encoding': 'chunked',
-        });
-        const stream = await this.musicService.getStream(id);
-        stream.pipe(res);
+    @Get('my-uploads')
+    async getMyUploads() {
+        return this.musicService.getAllSongs();
+    }
+
+    @Post('upload')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadSong(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
+        return this.musicService.uploadSong(file, body);
     }
 }

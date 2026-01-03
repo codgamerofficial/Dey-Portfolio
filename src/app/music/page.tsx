@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, TrendingUp, Music2, Radio, Heart } from 'lucide-react';
+import { Play, TrendingUp, Music2, Radio, Heart, Upload } from 'lucide-react';
 import { useMusicStore } from '@/lib/store/useMusicStore';
+import UploadModal from '@/components/music/UploadModal';
 
 const FEATURED_ALBUM = {
     id: 'feat-1',
@@ -46,6 +47,24 @@ export default function MusicPage() {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [searchResults, setSearchResults] = React.useState<any[]>([]);
     const [isSearching, setIsSearching] = React.useState(false);
+    const [myUploads, setMyUploads] = React.useState<any[]>([]);
+    const [isUploadModalOpen, setIsUploadModalOpen] = React.useState(false);
+
+    const fetchUploads = async () => {
+        try {
+            const res = await fetch('http://localhost:4000/music/my-uploads');
+            if (res.ok) {
+                const data = await res.json();
+                setMyUploads(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch uploads', error);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchUploads();
+    }, []);
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,13 +73,23 @@ export default function MusicPage() {
         setIsSearching(true);
         try {
             // Attempt to search via the NestJS Media Server
-            // Fallback to empty if server isn't running (CORS/Network error)
             const res = await fetch(`http://localhost:4000/music/search?q=${encodeURIComponent(searchQuery)}`)
                 .catch(() => null);
 
             if (res && res.ok) {
                 const data = await res.json();
-                setSearchResults(data.audius || []);
+                // Merge local results if available in backend response, or purely handle local
+                // Assuming backend returns { local: [], audius: [] } or just flat array?
+                // The service returns { local: [] }. Let's assume for now we just show local results if searching matches them?
+                // Actually the current backend service only returns { local: filtered }.
+                // If I want to search BOTH, I might need to update the backend logic more robustly later.
+                // For now, let's just use what the backend returns.
+                // The previous code expected { audius: [] }. My new backend returns { local: [] }.
+                // I should update the handler to support both or just set results.
+
+                // Let's blindly set results if array, or extracting keys.
+                const results = data.audius || data.local || [];
+                setSearchResults(results);
             } else {
                 console.warn('Backend unavailable, using static data only.');
             }
@@ -73,10 +102,16 @@ export default function MusicPage() {
 
     return (
         <div className="min-h-screen bg-black text-white pb-32">
+            <UploadModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUploadSuccess={fetchUploads}
+            />
+
             {/* Search Bar - Floating */}
             <div className="fixed top-24 left-0 right-0 z-40 px-4 pointer-events-none">
-                <div className="max-w-2xl mx-auto pointer-events-auto">
-                    <form onSubmit={handleSearch} className="relative group">
+                <div className="max-w-2xl mx-auto pointer-events-auto flex gap-4">
+                    <form onSubmit={handleSearch} className="relative group flex-1">
                         <div className="absolute inset-0 bg-[var(--neon-cyan)] rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity" />
                         <input
                             type="text"
@@ -89,6 +124,12 @@ export default function MusicPage() {
                             <Music2 size={20} />
                         </button>
                     </form>
+                    <button
+                        onClick={() => setIsUploadModalOpen(true)}
+                        className="h-[58px] px-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full hover:bg-[var(--neon-cyan)] hover:text-black transition-all shadow-2xl z-10 flex items-center gap-2 font-bold whitespace-nowrap"
+                    >
+                        <Upload size={20} /> <span className="hidden md:inline">Upload</span>
+                    </button>
                 </div>
             </div>
 
@@ -148,8 +189,58 @@ export default function MusicPage() {
                 </div>
             )}
 
+            {/* My Sonic Nexus (Uploads) */}
+            {!searchResults.length && (
+                <div className="px-8 md:px-16 pb-12">
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-bold flex items-center gap-3">
+                            <Music2 className="text-[var(--neon-cyan)]" />
+                            My Sonic Nexus
+                        </h2>
+                    </div>
+                    {myUploads.length > 0 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                            {myUploads.map((track, idx) => (
+                                <motion.div
+                                    key={track.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="group relative bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-colors border border-transparent hover:border-white/10"
+                                >
+                                    <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-black/50">
+                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 group-hover:scale-110 transition-transform duration-500">
+                                            <Music2 size={40} className="text-white/20" />
+                                        </div>
+                                        <button
+                                            onClick={() => play(track)}
+                                            className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <div className="w-12 h-12 bg-[var(--neon-cyan)] rounded-full flex items-center justify-center text-black shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                                                <Play fill="currentColor" className="ml-1" />
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <h3 className="font-bold text-white mb-1 truncate">{track.title}</h3>
+                                    <p className="text-xs text-white/50">{track.artist}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div
+                            onClick={() => setIsUploadModalOpen(true)}
+                            className="border-2 border-dashed border-zinc-800 rounded-2xl p-12 flex flex-col items-center justify-center text-zinc-500 hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/5 transition-all cursor-pointer"
+                        >
+                            <Upload size={48} className="mb-4" />
+                            <p className="font-bold text-lg">Upload your first song</p>
+                            <p className="text-sm opacity-60">Add to your lifetime library</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Search Results or Top Charts */}
-            <div className="px-8 md:px-16 pt-24 md:pt-12">
+            <div className="px-8 md:px-16 pt-0 md:pt-4">
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
                     {searchResults.length > 0 ? (
                         <>

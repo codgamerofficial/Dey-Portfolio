@@ -1,108 +1,82 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import axios from 'axios';
+
+import { Injectable, BadRequestException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class MusicService implements OnModuleInit {
-    private innertube: any;
+export class MusicService {
+    private readonly songsFilePath = path.join(process.cwd(), 'data', 'songs.json');
+    private readonly uploadDir = path.join(process.cwd(), 'uploads');
 
-    async onModuleInit() {
-        await this.initializeInnertube();
+    constructor() {
+        this.ensureDataFile();
     }
 
-    private async initializeInnertube() {
-        try {
-            // Dynamic import for ESM package
-            const { Innertube, UniversalCache } = await import('youtubei.js');
-            this.innertube = await Innertube.create({
-                cache: new UniversalCache(false),
-                generate_session_locally: true
-            });
-            console.log('Innertube initialized (Full)');
-        } catch (error) {
-            console.error('Failed to init Innertube:', error);
-        }
-    }
-
-    async searchAll(query: string) {
-        const [audiusResults, youtubeResults] = await Promise.all([
-            this.searchAudius(query),
-            this.searchYouTube(query)
-        ]);
-
-        return {
-            audius: audiusResults,
-            youtube: youtubeResults
-        };
-    }
-
-    private async getAudiusHost(): Promise<string> {
-        try {
-            const { data } = await axios.get('https://api.audius.co');
-            if (data.data && data.data.length > 0) {
-                return data.data[0];
+    private ensureDataFile() {
+        if (!fs.existsSync(this.songsFilePath)) {
+            const dir = path.dirname(this.songsFilePath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
             }
-            return 'https://discoveryprovider.audius.co';
-        } catch (e) {
-            console.error('Failed to resolve Audius Host', e);
-            return 'https://discoveryprovider.audius.co';
+            fs.writeFileSync(this.songsFilePath, '[]');
+        }
+        if (!fs.existsSync(this.uploadDir)) {
+            fs.mkdirSync(this.uploadDir, { recursive: true });
         }
     }
 
-    private async searchAudius(query: string) {
-        try {
-            const host = await this.getAudiusHost();
-            const { data } = await axios.get(`${host}/v1/tracks/search?query=${encodeURIComponent(query)}&app_name=SONIC_NEXUS`);
+    async uploadSong(file: Express.Multer.File, body: any) {
+        if (!file) throw new BadRequestException('No file uploaded');
 
-            return data.data.slice(0, 5).map((track: any) => ({
-                id: track.id,
-                title: track.title,
-                artist: track.user.name,
-                album: 'Single',
-                coverUrl: track.artwork ? track.artwork['480x480'] : null,
-                duration: track.duration,
-                source: 'AUDIUS'
-            }));
+        const { title, artist } = body;
+        const songId = uuidv4();
+        const fileExt = path.extname(file.originalname);
+        const fileName = `${songId}${fileExt}`;
+        const filePath = path.join(this.uploadDir, fileName);
+
+        // Write file to uploads directory
+        fs.writeFileSync(filePath, file.buffer);
+
+        // Create song entry
+        const songAtr = {
+            id: songId,
+            title: title || file.originalname,
+            artist: artist || 'Unknown Artist',
+            album: 'Sonic Uploads',
+            duration: 0, // Duration calculation would require 'music-metadata' or similar, strict validation skipped for speed
+            coverUrl: '', // Could allow cover upload too, but optional for now
+            audioUrl: `http://localhost:4000/uploads/${fileName}`,
+            source: 'UPLOAD'
+        };
+
+        // Save to JSON
+        const songs = this.getAllSongs();
+        songs.push(songAtr);
+        fs.writeFileSync(this.songsFilePath, JSON.stringify(songs, null, 2));
+
+        return songAtr;
+    }
+
+    getAllSongs() {
+        if (!fs.existsSync(this.songsFilePath)) return [];
+        const data = fs.readFileSync(this.songsFilePath, 'utf-8');
+        try {
+            return JSON.parse(data);
         } catch (e) {
-            console.error('Audius Error', e);
             return [];
         }
     }
 
-    private async searchYouTube(query: string) {
-        if (!this.innertube) return [];
-        try {
-            const results = await this.innertube.music.search(query);
-            // Safety check for songs array
-            if (!results.songs || !results.songs.contents) return [];
+    search(query: string) {
+        const songs = this.getAllSongs();
+        if (!query) return { local: songs };
 
-            return results.songs.contents.slice(0, 5).map((song: any) => ({
-                id: song.id,
-                title: song.title,
-                artist: song.artists?.[0]?.name || 'Unknown',
-                album: song.album?.name || 'Single',
-                coverUrl: song.thumbnails?.[0]?.url || null,
-                duration: song.duration?.seconds || 0,
-                source: 'YOUTUBE'
-            }));
-        } catch (e) {
-            console.error('YouTube Error', e);
-            return [];
-        }
-    }
-
-    async getStream(id: string): Promise<any> {
-        if (!this.innertube) throw new Error('Innertube not initialized');
-        try {
-            // Download stream for streaming
-            const stream = await this.innertube.download(id, {
-                type: 'audio',
-                quality: 'best',
-                format: 'mp4'
-            });
-            return stream;
-        } catch (e) {
-            console.error('Stream Error', e);
-            throw new Error('Failed to fetch stream');
-        }
+        const lowerQ = query.toLowerCase();
+        const filtered = songs.filter(s =>
+            s.title.toLowerCase().includes(lowerQ) ||
+            s.artist.toLowerCase().includes(lowerQ)
+        );
+        return { local: filtered };
     }
 }
