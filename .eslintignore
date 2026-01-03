@@ -1,0 +1,5 @@
+prompt-nexus/
+node_modules/
+.next/
+out/
+build/
