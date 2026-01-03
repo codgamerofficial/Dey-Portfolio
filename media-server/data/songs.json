@@ -8,5 +8,15 @@
     "coverUrl": "",
     "audioUrl": "http://localhost:4000/uploads/4d662eee-8217-471e-a2cd-31761e849736.mp3",
     "source": "UPLOAD"
+  },
+  {
+    "id": "554c7830-608f-49ae-97e3-98d2db70d563",
+    "title": "Raat’er Groove",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/554c7830-608f-49ae-97e3-98d2db70d563.mp3",
+    "source": "UPLOAD"
   }
 ]
