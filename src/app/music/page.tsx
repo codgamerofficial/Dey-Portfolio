@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Play, TrendingUp, Music2, Radio, Heart } from 'lucide-react';
 import { useMusicStore } from '@/lib/store/useMusicStore';
@@ -42,70 +43,129 @@ const CATEGORIES = [
 
 export default function MusicPage() {
     const { play } = useMusicStore();
+    const [searchQuery, setSearchQuery] = React.useState('');
+    const [searchResults, setSearchResults] = React.useState<any[]>([]);
+    const [isSearching, setIsSearching] = React.useState(false);
+
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!searchQuery.trim()) return;
+
+        setIsSearching(true);
+        try {
+            // Attempt to search via the NestJS Media Server
+            // Fallback to empty if server isn't running (CORS/Network error)
+            const res = await fetch(`http://localhost:4000/music/search?q=${encodeURIComponent(searchQuery)}`)
+                .catch(() => null);
+
+            if (res && res.ok) {
+                const data = await res.json();
+                setSearchResults(data.audius || []);
+            } else {
+                console.warn('Backend unavailable, using static data only.');
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-black text-white pb-32">
-            {/* Hero Section */}
-            <div className="relative h-[60vh] w-full overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${FEATURED_ALBUM.coverUrl})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-
-                <div className="absolute bottom-0 left-0 p-8 md:p-16 max-w-4xl z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-end gap-8"
-                    >
-                        <img
-                            src={FEATURED_ALBUM.coverUrl}
-                            alt={FEATURED_ALBUM.title}
-                            className="w-48 h-48 md:w-64 md:h-64 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hidden md:block"
+            {/* Search Bar - Floating */}
+            <div className="fixed top-24 left-0 right-0 z-40 px-4 pointer-events-none">
+                <div className="max-w-2xl mx-auto pointer-events-auto">
+                    <form onSubmit={handleSearch} className="relative group">
+                        <div className="absolute inset-0 bg-[var(--neon-cyan)] rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search the Sonic Nexus..."
+                            className="w-full bg-black/80 backdrop-blur-xl border border-white/20 rounded-full py-4 px-8 text-white placeholder-white/50 focus:outline-none focus:border-[var(--neon-cyan)] transition-colors shadow-2xl relative z-10"
                         />
-                        <div>
-                            <span className="text-[var(--neon-cyan)] text-sm font-bold tracking-widest mb-2 block">EXCLUSIVE PREMIERE</span>
-                            <h1 className="text-4xl md:text-7xl font-bold mb-4 leading-tight">{FEATURED_ALBUM.title}</h1>
-                            <p className="text-white/70 text-lg mb-8">{FEATURED_ALBUM.artist} • 2024 • Synthwave</p>
-
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={() => play(FEATURED_ALBUM.tracks[0])}
-                                    className="px-8 py-4 bg-[var(--neon-cyan)] text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
-                                >
-                                    <Play fill="currentColor" /> PLAY NOW
-                                </button>
-                                <button className="px-8 py-4 bg-white/10 backdrop-blur text-white font-bold rounded-full hover:bg-white/20 transition-colors border border-white/10">
-                                    SAVE TO LIBRARY
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
+                        <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 rounded-full hover:bg-[var(--neon-cyan)] hover:text-black transition-colors z-20">
+                            <Music2 size={20} />
+                        </button>
+                    </form>
                 </div>
             </div>
+
+            {/* Hero Section (Hidden when searching) */}
+            {!searchResults.length && !isSearching ? (
+                <div className="relative h-[60vh] w-full overflow-hidden">
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${FEATURED_ALBUM.coverUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+                    <div className="absolute bottom-0 left-0 p-8 md:p-16 max-w-4xl z-10">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-end gap-8"
+                        >
+                            <img
+                                src={FEATURED_ALBUM.coverUrl}
+                                alt={FEATURED_ALBUM.title}
+                                className="w-48 h-48 md:w-64 md:h-64 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 hidden md:block"
+                            />
+                            <div>
+                                <span className="text-[var(--neon-cyan)] text-sm font-bold tracking-widest mb-2 block">EXCLUSIVE PREMIERE</span>
+                                <h1 className="text-4xl md:text-7xl font-bold mb-4 leading-tight">{FEATURED_ALBUM.title}</h1>
+                                <p className="text-white/70 text-lg mb-8">{FEATURED_ALBUM.artist} • 2024 • Synthwave</p>
+
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={() => play(FEATURED_ALBUM.tracks[0])}
+                                        className="px-8 py-4 bg-[var(--neon-cyan)] text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
+                                    >
+                                        <Play fill="currentColor" /> PLAY NOW
+                                    </button>
+                                    <button className="px-8 py-4 bg-white/10 backdrop-blur text-white font-bold rounded-full hover:bg-white/20 transition-colors border border-white/10">
+                                        SAVE TO LIBRARY
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            ) : null}
 
             {/* Quick Categories */}
-            <div className="px-8 md:px-16 py-12">
-                <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                    {CATEGORIES.map((cat, idx) => (
-                        <div key={idx} className="flex-shrink-0 px-6 py-3 bg-white/5 border border-white/10 rounded-full flex items-center gap-3 cursor-pointer hover:bg-white/10 hover:border-[var(--neon-cyan)] transition-all">
-                            <cat.icon className="w-5 h-5 text-[var(--neon-cyan)]" />
-                            <span className="font-medium whitespace-nowrap">{cat.title}</span>
-                        </div>
-                    ))}
+            {!searchResults.length && (
+                <div className="px-8 md:px-16 py-12">
+                    <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                        {CATEGORIES.map((cat, idx) => (
+                            <div key={idx} className="flex-shrink-0 px-6 py-3 bg-white/5 border border-white/10 rounded-full flex items-center gap-3 cursor-pointer hover:bg-white/10 hover:border-[var(--neon-cyan)] transition-all">
+                                <cat.icon className="w-5 h-5 text-[var(--neon-cyan)]" />
+                                <span className="font-medium whitespace-nowrap">{cat.title}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
-            {/* Track Grid */}
-            <div className="px-8 md:px-16">
+            {/* Search Results or Top Charts */}
+            <div className="px-8 md:px-16 pt-24 md:pt-12">
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                    <TrendingUp className="text-[var(--neon-cyan)]" />
-                    Top Charts
+                    {searchResults.length > 0 ? (
+                        <>
+                            <Radio className="text-[var(--neon-cyan)]" />
+                            Search Results
+                        </>
+                    ) : (
+                        <>
+                            <TrendingUp className="text-[var(--neon-cyan)]" />
+                            Top Charts
+                        </>
+                    )}
                 </h2>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {FEATURED_ALBUM.tracks.map((track, idx) => (
+                    {(searchResults.length > 0 ? searchResults : FEATURED_ALBUM.tracks).map((track, idx) => (
                         <motion.div
                             key={track.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -113,8 +173,14 @@ export default function MusicPage() {
                             transition={{ delay: idx * 0.1 }}
                             className="group relative bg-white/5 rounded-2xl p-4 hover:bg-white/10 transition-colors border border-transparent hover:border-white/10"
                         >
-                            <div className="relative aspect-square rounded-xl overflow-hidden mb-4">
-                                <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-black/50">
+                                {track.coverUrl ? (
+                                    <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-white/20">
+                                        <Music2 size={48} />
+                                    </div>
+                                )}
                                 <button
                                     onClick={() => play(track)}
                                     className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
