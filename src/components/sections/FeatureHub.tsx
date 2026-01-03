@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Network, BarChart3, Fingerprint, Music, FileText, ArrowRight } from 'lucide-react';
+import { Network, BarChart3, Fingerprint, Music, FileText, ArrowRight, Train } from 'lucide-react';
 
 const FEATURES = [
     {
@@ -49,6 +49,15 @@ const FEATURES = [
         href: '/pdf',
         color: 'text-blue-400',
         border: 'border-blue-400/30'
+    },
+    {
+        id: 'trains',
+        title: 'Loco Tracker',
+        desc: 'Real-time locomotive tracking and telemetry system.',
+        icon: Train,
+        href: '/trains',
+        color: 'text-orange-400',
+        border: 'border-orange-400/30'
     }
 ];
 
