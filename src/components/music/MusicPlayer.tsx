@@ -109,10 +109,11 @@ export default function MusicPlayer() {
 
     return (
         <AnimatePresence>
-            {isExpanded && <FullScreenPlayer onClose={() => setIsExpanded(false)} />}
-            {showQueue && <QueueDrawer onClose={() => setShowQueue(false)} />}
+            {isExpanded && <FullScreenPlayer key="fullscreen-player" onClose={() => setIsExpanded(false)} />}
+            {showQueue && <QueueDrawer key="queue-drawer" onClose={() => setShowQueue(false)} />}
 
             <motion.div
+                key="music-bar"
                 initial={{ y: 100 }}
                 animate={{ y: 0 }}
                 exit={{ y: 100 }}
