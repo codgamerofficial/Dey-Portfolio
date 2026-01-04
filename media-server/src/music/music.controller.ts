@@ -1,5 +1,5 @@
 
-import { Controller, Get, Post, Query, UseInterceptors, UploadedFile, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Query, UseInterceptors, UploadedFile, Body, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MusicService } from './music.service';
 
@@ -34,5 +34,9 @@ export class MusicController {
             console.error('Upload error:', error);
             throw error;
         }
+    }
+    @Delete(':id')
+    async deleteSong(@Param('id') id: string) {
+        return this.musicService.deleteSong(id);
     }
 }

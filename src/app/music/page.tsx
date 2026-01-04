@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play, TrendingUp, Music2, Radio, Heart, Upload } from 'lucide-react';
+import { Play, TrendingUp, Music2, Radio, Heart, Upload, Trash2, Loader2 } from 'lucide-react';
 import { useMusicStore } from '@/lib/store/useMusicStore';
 import UploadModal from '@/components/music/UploadModal';
 
@@ -49,6 +49,7 @@ export default function MusicPage() {
     const [isSearching, setIsSearching] = React.useState(false);
     const [myUploads, setMyUploads] = React.useState<any[]>([]);
     const [isUploadModalOpen, setIsUploadModalOpen] = React.useState(false);
+    const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
     const fetchUploads = async () => {
         try {
@@ -59,6 +60,29 @@ export default function MusicPage() {
             }
         } catch (error) {
             console.error('Failed to fetch uploads', error);
+        }
+    };
+
+    const handleDelete = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation(); // Prevent playing the song
+        if (!confirm('Are you sure you want to delete this song?')) return;
+
+        setDeletingId(id);
+        try {
+            const res = await fetch(`http://localhost:4000/music/${id}`, {
+                method: 'DELETE',
+            });
+            if (res.ok) {
+                // Refresh list
+                setMyUploads(prev => prev.filter(s => s.id !== id));
+            } else {
+                alert('Failed to delete song');
+            }
+        } catch (error) {
+            console.error('Delete error', error);
+            alert('Error deleting song');
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -220,12 +244,27 @@ export default function MusicPage() {
                                                 <Play fill="currentColor" className="ml-1" />
                                             </div>
                                         </button>
+
+                                        {/* Delete Button */}
+                                        <button
+                                            onClick={(e) => handleDelete(e, track.id)}
+                                            disabled={deletingId === track.id}
+                                            className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full text-white/70 hover:text-red-500 hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                            title="Delete Song"
+                                        >
+                                            {deletingId === track.id ? (
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                            ) : (
+                                                <Trash2 className="w-4 h-4" />
+                                            )}
+                                        </button>
                                     </div>
                                     <h3 className="font-bold text-white mb-1 truncate">{track.title}</h3>
                                     <p className="text-xs text-white/50">{track.artist}</p>
                                 </motion.div>
-                            ))}
-                        </div>
+                            ))
+                            }
+                        </div >
                     ) : (
                         <div
                             onClick={() => setIsUploadModalOpen(true)}
@@ -236,7 +275,7 @@ export default function MusicPage() {
                             <p className="text-sm opacity-60">Add to your lifetime library</p>
                         </div>
                     )}
-                </div>
+                </div >
             )}
 
             {/* Search Results or Top Charts */}
@@ -287,6 +326,6 @@ export default function MusicPage() {
                     ))}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

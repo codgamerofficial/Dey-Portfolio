@@ -10,13 +10,53 @@
     "source": "UPLOAD"
   },
   {
-    "id": "554c7830-608f-49ae-97e3-98d2db70d563",
-    "title": "Raat’er Groove",
+    "id": "4daa4b34-6489-4ccf-bf7d-d5bf8edeaa2d",
+    "title": "Raat’er Groove (1)",
     "artist": "Unknown Artist",
     "album": "Sonic Uploads",
     "duration": 0,
     "coverUrl": "",
-    "audioUrl": "http://localhost:4000/uploads/554c7830-608f-49ae-97e3-98d2db70d563.mp3",
+    "audioUrl": "http://localhost:4000/uploads/4daa4b34-6489-4ccf-bf7d-d5bf8edeaa2d.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "d7c2eb89-7f76-458b-af23-29c47e4e0cde",
+    "title": "Men in Blue_ The Legacy Roars of Indian Cricket Legendary (1)",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/d7c2eb89-7f76-458b-af23-29c47e4e0cde.wav",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "c953dd71-5879-4bc7-ac2a-e99b59fa9e7d",
+    "title": "শীতের নীল শহর",
+    "artist": "Saswata Dey",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/c953dd71-5879-4bc7-ac2a-e99b59fa9e7d.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "8045249d-d15d-4256-992a-4195b2a3be3b",
+    "title": "karon muza",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/8045249d-d15d-4256-992a-4195b2a3be3b.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "84d76abf-5ebe-4f5d-9928-1c3a07a321e5",
+    "title": "ki kori muza",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/84d76abf-5ebe-4f5d-9928-1c3a07a321e5.mp3",
     "source": "UPLOAD"
   }
 ]

@@ -1,5 +1,5 @@
 
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -78,5 +78,39 @@ export class MusicService {
             s.artist.toLowerCase().includes(lowerQ)
         );
         return { local: filtered };
+    }
+
+    async deleteSong(id: string) {
+        const songs = this.getAllSongs();
+        const songIndex = songs.findIndex(s => s.id === id);
+
+        if (songIndex === -1) {
+            throw new NotFoundException(`Song with ID ${id} not found`);
+        }
+
+        const song = songs[songIndex];
+
+        // Delete the file
+        if (song.audioUrl) {
+            try {
+                // Extract filename from URL (http://localhost:4000/uploads/filename.ext)
+                const fileName = song.audioUrl.split('/').pop();
+                if (fileName) {
+                    const filePath = path.join(this.uploadDir, fileName);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed to delete file for song ${id}`, e);
+                // Continue to delete record even if file deletion fails
+            }
+        }
+
+        // Remove from array and save
+        songs.splice(songIndex, 1);
+        fs.writeFileSync(this.songsFilePath, JSON.stringify(songs, null, 2));
+
+        return { message: 'Song deleted successfully', id };
     }
 }
