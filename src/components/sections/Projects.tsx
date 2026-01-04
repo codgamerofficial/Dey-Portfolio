@@ -80,7 +80,8 @@ export default function Projects() {
                 </motion.div>
 
                 {/* Projects Grid */}
-                <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                {/* Projects Grid */}
+                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-[1600px] mx-auto px-6">
                     {projects.map((project, index) => (
                         <motion.div
                             key={project.id}
