@@ -166,7 +166,7 @@ export default function MusicPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
-                    <div className="absolute bottom-0 left-0 p-8 md:p-16 max-w-4xl z-10">
+                    <div className="absolute bottom-0 left-0 p-6 md:p-16 max-w-4xl z-10">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -185,7 +185,7 @@ export default function MusicPage() {
                                 <div className="flex items-center gap-4">
                                     <button
                                         onClick={() => play(FEATURED_ALBUM.tracks[0])}
-                                        className="px-8 py-4 bg-[var(--neon-cyan)] text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
+                                        className="px-6 py-3 md:px-8 md:py-4 bg-[var(--neon-cyan)] text-black font-bold rounded-full hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_30px_rgba(34,211,238,0.4)] text-sm md:text-base"
                                     >
                                         <Play fill="currentColor" /> PLAY NOW
                                     </button>
@@ -201,7 +201,7 @@ export default function MusicPage() {
 
             {/* Quick Categories */}
             {!searchResults.length && (
-                <div className="px-8 md:px-16 py-12">
+                <div className="px-4 md:px-16 py-8 md:py-12">
                     <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
                         {CATEGORIES.map((cat, idx) => (
                             <div key={idx} className="flex-shrink-0 px-6 py-3 bg-white/5 border border-white/10 rounded-full flex items-center gap-3 cursor-pointer hover:bg-white/10 hover:border-[var(--neon-cyan)] transition-all">
@@ -215,7 +215,7 @@ export default function MusicPage() {
 
             {/* My Sonic Nexus (Uploads) */}
             {!searchResults.length && (
-                <div className="px-8 md:px-16 pb-12">
+                <div className="px-4 md:px-16 pb-12">
                     <div className="flex items-center justify-between mb-8">
                         <h2 className="text-2xl font-bold flex items-center gap-3">
                             <Music2 className="text-[var(--neon-cyan)]" />
@@ -223,7 +223,7 @@ export default function MusicPage() {
                         </h2>
                     </div>
                     {myUploads.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
                             {myUploads.map((track, idx) => (
                                 <motion.div
                                     key={track.id}
@@ -279,7 +279,7 @@ export default function MusicPage() {
             )}
 
             {/* Search Results or Top Charts */}
-            <div className="px-8 md:px-16 pt-0 md:pt-4">
+            <div className="px-4 md:px-16 pt-0 md:pt-4">
                 <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
                     {searchResults.length > 0 ? (
                         <>
@@ -294,7 +294,7 @@ export default function MusicPage() {
                     )}
                 </h2>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                     {(searchResults.length > 0 ? searchResults : FEATURED_ALBUM.tracks).map((track, idx) => (
                         <motion.div
                             key={track.id}
