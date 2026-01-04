@@ -56,6 +56,10 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 
 import SeasonalEffects from "@/components/ui/SeasonalEffects";
 
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import ScrollToTop from "@/components/ui/ScrollToTop";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -73,7 +77,11 @@ export default function RootLayout({
         <SpiderCursor />
         {/* Halftone Overlay for Spider-Verse Feel */}
         <div className="halftone-overlay pointer-events-none" />
-        {children}
+        <ScrollProgress />
+        <ScrollToTop />
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
