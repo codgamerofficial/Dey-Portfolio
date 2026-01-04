@@ -65,12 +65,22 @@ export default function Hero() {
             >
                 {/* Glitch Effect Name */}
                 <motion.div variants={itemVariants} className="mb-4 md:mb-6">
-                    <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold mb-4 relative glitch-text" data-text="Saswata Dey">
-                        <span className="gradient-text">Saswata Dey</span>
-                        <span className="absolute inset-0 gradient-text opacity-50 blur-sm animate-pulse">
+                    <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold mb-4 relative glitch-text dhurandhar-intro" data-text="Saswata Dey">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--dhurandhar-gold)] via-[var(--dhurandhar-amber)] to-[var(--dhurandhar-red)]">Saswata Dey</span>
+                        <span className="absolute inset-0 bg-clip-text text-transparent bg-gradient-to-r from-[var(--dhurandhar-gold)] via-[var(--dhurandhar-amber)] to-[var(--dhurandhar-red)] opacity-50 blur-sm animate-pulse">
                             Saswata Dey
                         </span>
                     </h1>
+                    <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 1, duration: 0.5, type: 'spring' }}
+                        className="inline-block px-4 py-1 mb-4 border border-[var(--dhurandhar-gold)] rounded-full bg-[var(--dhurandhar-dark)]/50 backdrop-blur-md"
+                    >
+                        <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] text-[var(--dhurandhar-gold)] uppercase">
+                            ★ Dhurandhar Protocol Active ★
+                        </span>
+                    </motion.div>
                 </motion.div>
 
                 {/* Tagline */}

@@ -67,6 +67,75 @@
   --gradient-primary: linear-gradient(135deg, #00f2ea 0%, #ff0050 100%);
 }
 
+/* ==================== DHURANDHAR THEME (Spy/Action/Gold) ==================== */
+:root {
+  --dhurandhar-gold: #FFD700;
+  --dhurandhar-amber: #FF8C00;
+  --dhurandhar-red: #8B0000;
+  --dhurandhar-dark: #050200;
+  --dhurandhar-gradient: linear-gradient(135deg, #FFD700 0%, #FF8C00 50%, #8B0000 100%);
+}
+
+.dhurandhar-intro {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  color: transparent;
+  background: var(--dhurandhar-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5));
+}
+
+@keyframes slam {
+  0% {
+    transform: scale(3);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  60% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-slam {
+  animation: slam 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes flicker-gold {
+
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    text-shadow: 0 0 10px var(--dhurandhar-gold), 0 0 20px var(--dhurandhar-gold);
+    color: #fff;
+  }
+
+  20%,
+  24%,
+  55% {
+    text-shadow: none;
+    color: #444;
+  }
+}
+
+.gold-glow {
+  text-shadow: 0 0 10px var(--dhurandhar-gold), 0 0 20px var(--dhurandhar-amber);
+}
+
 /* ==================== GLOBAL STYLES ==================== */
 * {
   margin: 0;

@@ -19,17 +19,17 @@ export default function IdentityVerification() {
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/50 text-yellow-500 text-[10px] font-bold tracking-[0.2em] mb-4"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--dhurandhar-gold)]/10 border border-[var(--dhurandhar-gold)]/50 text-[var(--dhurandhar-gold)] text-[10px] font-bold tracking-[0.2em] mb-4"
                     >
-                        <Star className="w-3 h-3 fill-yellow-500" />
-                        PREMIUM VERIFICATION DETECTED
-                        <Star className="w-3 h-3 fill-yellow-500" />
+                        <Star className="w-3 h-3 fill-[var(--dhurandhar-gold)]" />
+                        CLASSIFIED ACCESS: LEVEL 5
+                        <Star className="w-3 h-3 fill-[var(--dhurandhar-gold)]" />
                     </motion.div>
 
                     <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">
                         OFFICIAL CREDENTIALS
                     </h2>
-                    <div className="h-1 w-24 mx-auto bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] mt-4 rounded-full" />
+                    <div className="h-1 w-24 mx-auto bg-gradient-to-r from-[var(--dhurandhar-gold)] to-[var(--dhurandhar-red)] mt-4 rounded-full" />
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -48,12 +48,12 @@ export default function IdentityVerification() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 mt-4">
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3 group hover:border-[var(--neon-blue)] transition-colors">
-                                <div className="w-10 h-10 rounded-full bg-[var(--neon-blue)]/10 flex items-center justify-center text-[var(--neon-blue)]">
+                            <div className="p-4 rounded-xl bg-[var(--dhurandhar-dark)] border border-[var(--dhurandhar-gold)]/30 flex items-center gap-3 group hover:border-[var(--dhurandhar-gold)] transition-colors hover:shadow-[0_0_20px_rgba(255,215,0,0.2)]">
+                                <div className="w-10 h-10 rounded-full bg-[var(--dhurandhar-gold)]/10 flex items-center justify-center text-[var(--dhurandhar-gold)]">
                                     <Award className="w-5 h-5" />
                                 </div>
                                 <div className="text-left">
-                                    <div className="text-xs text-white/50 font-mono">DEGREE</div>
+                                    <div className="text-xs text-[var(--dhurandhar-gold)]/50 font-mono tracking-widest">AGENT STATUS</div>
                                     <div className="text-sm font-bold text-white">B.Tech (CSE)</div>
                                 </div>
                             </div>
