@@ -55,25 +55,25 @@ export default function FullScreenPlayer({ onClose }: FullScreenPlayerProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             </div>
 
-            <div className="relative z-10 w-full max-w-4xl px-8 flex flex-col h-full py-12">
+            <div className="relative z-10 w-full max-w-4xl px-6 md:px-8 flex flex-col h-full py-6 md:py-12">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center mb-4 md:mb-8 shrink-0">
                     <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
                         <Minimize2 size={24} />
                     </button>
-                    <span className="text-sm font-medium tracking-widest uppercase text-white/50">Playing from Sonic Nexus</span>
+                    <span className="text-xs md:text-sm font-medium tracking-widest uppercase text-white/50">Playing from Sonic Nexus</span>
                     <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
                         <ListMusic size={24} />
                     </button>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+                <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-20 min-h-0">
                     {/* Album Art */}
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="w-full md:w-1/2 aspect-square max-w-[500px] relative group"
+                        className="w-full max-w-[300px] md:max-w-[450px] aspect-square relative group shrink-0"
                     >
                         <div className={cn(
                             "w-full h-full rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10",
@@ -92,13 +92,13 @@ export default function FullScreenPlayer({ onClose }: FullScreenPlayerProps) {
                     </motion.div>
 
                     {/* Controls & Info */}
-                    <div className="w-full md:w-1/2 flex flex-col justify-center space-y-8">
-                        <div className="space-y-2 text-center md:text-left">
+                    <div className="w-full md:w-1/2 flex flex-col justify-center space-y-6 md:space-y-8 min-h-0">
+                        <div className="space-y-1 md:space-y-2 text-center md:text-left shrink-0">
                             <motion.h2
                                 key={currentTrack?.title}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="text-4xl md:text-5xl font-bold leading-tight"
+                                className="text-2xl md:text-5xl font-bold leading-tight truncate px-4 md:px-0"
                             >
                                 {currentTrack?.title}
                             </motion.h2>
@@ -107,15 +107,14 @@ export default function FullScreenPlayer({ onClose }: FullScreenPlayerProps) {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 }}
-                                className="text-xl md:text-2xl text-[var(--neon-cyan)] font-medium"
+                                className="text-lg md:text-2xl text-[var(--neon-cyan)] font-medium truncate"
                             >
                                 {currentTrack?.artist}
                             </motion.p>
                         </div>
 
                         {/* Progress */}
-                        {/* Note: In a real implementation we need accurate progress here. For now we use the store's "currentTime" which is roughly updated. */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 shrink-0">
                             <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-[var(--neon-cyan)] rounded-full transition-all duration-1000 ease-linear"
@@ -129,36 +128,36 @@ export default function FullScreenPlayer({ onClose }: FullScreenPlayerProps) {
                         </div>
 
                         {/* Main Controls */}
-                        <div className="flex items-center justify-center md:justify-between gap-6">
+                        <div className="flex items-center justify-center md:justify-between gap-6 md:gap-6 shrink-0">
                             <button onClick={toggleShuffle} className={cn("p-2 transition-colors", shuffle ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}>
-                                <Shuffle size={24} />
+                                <Shuffle size={20} className="md:w-6 md:h-6" />
                             </button>
 
-                            <div className="flex items-center gap-8">
+                            <div className="flex items-center gap-6 md:gap-8">
                                 <button onClick={playPrev} className="text-white hover:text-[var(--neon-cyan)] transition-colors transform hover:-translate-x-1">
-                                    <SkipBack size={32} />
+                                    <SkipBack size={28} className="md:w-8 md:h-8" />
                                 </button>
 
                                 <button
                                     onClick={() => isPlaying ? pause() : play()}
-                                    className="w-20 h-20 rounded-full bg-[var(--neon-cyan)] text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_40px_rgba(0,255,255,0.3)]"
+                                    className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[var(--neon-cyan)] text-black flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_40px_rgba(0,255,255,0.3)]"
                                 >
-                                    {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-2" />}
+                                    {isPlaying ? <Pause size={28} fill="currentColor" className="md:w-8 md:h-8" /> : <Play size={28} fill="currentColor" className="ml-1 md:w-8 md:h-8" />}
                                 </button>
 
                                 <button onClick={playNext} className="text-white hover:text-[var(--neon-cyan)] transition-colors transform hover:translate-x-1">
-                                    <SkipForward size={32} />
+                                    <SkipForward size={28} className="md:w-8 md:h-8" />
                                 </button>
                             </div>
 
                             <button onClick={toggleRepeat} className={cn("p-2 transition-colors relative", repeat !== 'off' ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}>
-                                <Repeat size={24} />
+                                <Repeat size={20} className="md:w-6 md:h-6" />
                                 {repeat === 'one' && <span className="absolute top-0 right-0 text-[10px] bg-black px-1 rounded-full">1</span>}
                             </button>
                         </div>
 
                         {/* Volume */}
-                        <div className="flex items-center gap-4 px-4 bg-white/5 rounded-xl p-3">
+                        <div className="flex items-center gap-4 px-4 bg-white/5 rounded-xl p-3 shrink-0">
                             <button onClick={toggleMute}>
                                 {isMuted || volume === 0 ? <VolumeX className="text-white/50" /> : <Volume2 className="text-white/50" />}
                             </button>

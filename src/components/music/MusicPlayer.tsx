@@ -119,19 +119,19 @@ export default function MusicPlayer() {
                 exit={{ y: 100 }}
                 className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4"
             >
-                <div className="max-w-7xl mx-auto bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-6 shadow-2xl relative overflow-hidden">
+                <div className="max-w-7xl mx-auto bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 md:p-4 flex items-center justify-between gap-4 shadow-2xl relative overflow-hidden">
 
                     {/* Glassmorphic Glow */}
                     <div className="absolute top-0 left-1/4 w-1/2 h-full bg-[var(--neon-cyan)] blur-[100px] opacity-10 pointer-events-none" />
 
                     {/* Track Info */}
-                    <div className="flex items-center gap-4 w-1/4 z-10">
-                        <div className="w-14 h-14 rounded-lg overflow-hidden relative group bg-zinc-800 flex items-center justify-center cursor-pointer" onClick={() => setIsExpanded(true)}>
+                    <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0 z-10">
+                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden relative group bg-zinc-800 flex items-center justify-center cursor-pointer shrink-0" onClick={() => setIsExpanded(true)}>
                             {currentTrack.coverUrl ? (
                                 <img src={currentTrack.coverUrl} alt={currentTrack.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             ) : (
                                 <div className="text-white/20">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+                                    <Music size={24} />
                                 </div>
                             )}
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -139,24 +139,27 @@ export default function MusicPlayer() {
                             </div>
                         </div>
                         <div className="overflow-hidden">
-                            <h4 className="text-white font-bold truncate text-sm">{currentTrack.title}</h4>
-                            <p className="text-white/50 text-xs truncate hover:text-[var(--neon-cyan)] transition-colors cursor-pointer">{currentTrack.artist}</p>
+                            <h4 className="text-white font-bold truncate text-sm md:text-base">{currentTrack.title}</h4>
+                            <p className="text-white/50 text-xs md:text-sm truncate hover:text-[var(--neon-cyan)] transition-colors cursor-pointer">{currentTrack.artist}</p>
                         </div>
                     </div>
 
-                    {/* Controls */}
-                    <div className="flex-1 flex flex-col items-center gap-2 z-10">
-                        <div className="flex items-center gap-6">
+                    {/* Controls Center - Responsive */}
+                    <div className="flex flex-col items-center justify-center gap-2 z-10 md:flex-1">
+                        <div className="flex items-center gap-4 md:gap-6">
+                            {/* Shuffle - Desktop Only */}
                             <button
-                                className={cn("transition-colors", shuffle ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}
+                                className={cn("transition-colors hidden md:block", shuffle ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}
                                 onClick={toggleShuffle}
                                 title="Shuffle"
                             >
                                 <Shuffle size={16} />
                             </button>
 
-                            <button className="text-white hover:text-[var(--neon-cyan)] transition-colors" onClick={playPrev}><SkipBack size={24} /></button>
+                            {/* Prev - Desktop Only */}
+                            <button className="text-white hover:text-[var(--neon-cyan)] transition-colors hidden md:block" onClick={playPrev}><SkipBack size={24} /></button>
 
+                            {/* Play/Pause - Always Visible */}
                             <button
                                 onClick={() => isPlaying ? pause() : play()}
                                 className="w-10 h-10 rounded-full bg-[var(--neon-cyan)] flex items-center justify-center text-black hover:scale-110 transition-transform shadow-[0_0_20px_var(--neon-cyan)]"
@@ -164,10 +167,13 @@ export default function MusicPlayer() {
                                 {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
                             </button>
 
+                            {/* Next - Always Visible (or Desktop Only depending on preference, usually Keep Next) */}
+                            {/* Let's keep Next on mobile for quick skipping */}
                             <button className="text-white hover:text-[var(--neon-cyan)] transition-colors" onClick={playNext}><SkipForward size={24} /></button>
 
+                            {/* Repeat - Desktop Only */}
                             <button
-                                className={cn("transition-colors relative", repeat !== 'off' ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}
+                                className={cn("transition-colors relative hidden md:block", repeat !== 'off' ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}
                                 onClick={toggleRepeat}
                                 title="Repeat"
                             >
@@ -176,8 +182,8 @@ export default function MusicPlayer() {
                             </button>
                         </div>
 
-                        {/* Progress Bar */}
-                        <div className="w-full flex items-center gap-3 group">
+                        {/* Progress Bar - Desktop Only (rely on Fullscreen for mobile progress) */}
+                        <div className="w-full max-w-md hidden md:flex items-center gap-3 group">
                             <span className="text-[10px] text-white/40 font-mono w-8 text-right">
                                 {formatTime(soundRef.current?.seek() || 0)}
                             </span>
@@ -208,17 +214,19 @@ export default function MusicPlayer() {
                         </div>
                     </div>
 
-                    {/* Volume & Extras */}
-                    <div className="w-1/4 flex items-center justify-end gap-4 z-10">
+                    {/* Volume & Extras - Desktop Mostly */}
+                    <div className="flex items-center justify-end gap-3 md:gap-4 md:flex-1 min-w-0 z-10">
+                        {/* Queue - Mobile & Desktop */}
                         <button
                             className={cn("transition-colors", showQueue ? "text-[var(--neon-cyan)]" : "text-white/40 hover:text-white")}
                             onClick={() => setShowQueue(!showQueue)}
                             title="Queue"
                         >
-                            <ListMusic size={18} />
+                            <ListMusic size={20} />
                         </button>
 
-                        <div className="flex items-center gap-2 group/vol">
+                        {/* Volume - Desktop Only */}
+                        <div className="hidden md:flex items-center gap-2 group/vol">
                             <button onClick={toggleMute} className="text-white/60 hover:text-white">
                                 {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                             </button>
@@ -239,12 +247,13 @@ export default function MusicPlayer() {
                             </div>
                         </div>
 
+                        {/* Maximize - Mobile & Desktop */}
                         <button
                             onClick={() => setIsExpanded(!isExpanded)}
                             className="text-white/40 hover:text-white transition-colors"
                             title="Full Screen Player"
                         >
-                            <Maximize2 size={18} />
+                            <Maximize2 size={20} />
                         </button>
                     </div>
                 </div>
