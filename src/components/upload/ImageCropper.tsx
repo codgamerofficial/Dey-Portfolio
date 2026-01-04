@@ -2,9 +2,20 @@
 
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import { Point, Area } from 'react-easy-crop/types';
 import { Check, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { getCroppedImg } from '@/lib/upload-utils/cropImageHelper';
+
+export interface Point {
+    x: number;
+    y: number;
+}
+
+export interface Area {
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+}
 
 interface ImageCropperProps {
     imageSrc: string;
