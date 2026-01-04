@@ -51,7 +51,7 @@ export default function Contact() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
                         <span className="gradient-text">Get In Touch</span>
                     </h2>
                     <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">

@@ -71,7 +71,7 @@ export default function About() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-5xl font-bold mb-6"
+                            className="text-4xl md:text-5xl font-bold mb-6"
                         >
                             <span className="gradient-text">About Me</span>
                         </motion.h2>
