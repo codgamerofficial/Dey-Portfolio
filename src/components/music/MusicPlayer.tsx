@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Howl } from 'howler';
 import { useMusicStore } from '@/lib/store/useMusicStore';
 import FullScreenPlayer from './FullScreenPlayer';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, Repeat, Shuffle, ListMusic } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Maximize2, Repeat, Shuffle, ListMusic, Music } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import QueueDrawer from './QueueDrawer'; // Future import
