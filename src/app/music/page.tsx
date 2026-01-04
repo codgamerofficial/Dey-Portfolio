@@ -53,7 +53,7 @@ export default function MusicPage() {
 
     const fetchUploads = async () => {
         try {
-            const res = await fetch('http://localhost:4000/music/my-uploads');
+            const res = await fetch('/music/my-uploads');
             if (res.ok) {
                 const data = await res.json();
                 setMyUploads(data);
@@ -69,7 +69,7 @@ export default function MusicPage() {
 
         setDeletingId(id);
         try {
-            const res = await fetch(`http://localhost:4000/music/${id}`, {
+            const res = await fetch(`/music/${id}`, {
                 method: 'DELETE',
             });
             if (res.ok) {
@@ -97,7 +97,7 @@ export default function MusicPage() {
         setIsSearching(true);
         try {
             // Attempt to search via the NestJS Media Server
-            const res = await fetch(`http://localhost:4000/music/search?q=${encodeURIComponent(searchQuery)}`)
+            const res = await fetch(`/music/search?q=${encodeURIComponent(searchQuery)}`)
                 .catch(() => null);
 
             if (res && res.ok) {
