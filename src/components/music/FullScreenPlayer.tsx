@@ -4,7 +4,7 @@ import { useMusicStore } from '@/lib/store/useMusicStore';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Minimize2, Repeat, Shuffle, ListMusic } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+
 
 interface FullScreenPlayerProps {
     onClose: () => void;
