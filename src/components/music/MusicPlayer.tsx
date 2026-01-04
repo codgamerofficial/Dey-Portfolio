@@ -74,7 +74,7 @@ export default function MusicPlayer() {
             // Progress Loop
             const timer = setInterval(() => {
                 if (sound.playing()) {
-                    const seek = sound.seek();
+                    const seek = sound.seek() as number;
                     setCurrentTime(seek);
                     setProgress((seek / sound.duration()) * 100);
                 }
