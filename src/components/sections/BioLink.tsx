@@ -23,7 +23,7 @@ export default function BioLink() {
                         <span className="text-2xl">⚡</span>
                         <span className="font-bold tracking-widest uppercase">Biometric Systems</span>
                     </div>
-                    <h2 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
+                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 text-white leading-tight">
                         Bio-Link <br />
                         <span className="text-white/50">Tracker</span>
                     </h2>

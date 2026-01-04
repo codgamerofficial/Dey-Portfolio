@@ -58,5 +58,45 @@
     "coverUrl": "",
     "audioUrl": "http://localhost:4000/uploads/84d76abf-5ebe-4f5d-9928-1c3a07a321e5.mp3",
     "source": "UPLOAD"
+  },
+  {
+    "id": "e353c117-e85a-4757-a07a-c4fbcd69650a",
+    "title": "Millionaire Bangali",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/e353c117-e85a-4757-a07a-c4fbcd69650a.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "077e9915-96ed-4aa6-b0dc-d1fe8684291a",
+    "title": "Millionaire Bangali",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/077e9915-96ed-4aa6-b0dc-d1fe8684291a.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "075a6b34-499c-41d0-8fc9-595d7cceb615",
+    "title": "DHURANDHAR” – Title Track (1)",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/075a6b34-499c-41d0-8fc9-595d7cceb615.mp3",
+    "source": "UPLOAD"
+  },
+  {
+    "id": "ea6e1299-abdb-4ff7-894c-8c16a90a675b",
+    "title": "Millionaire Bangali",
+    "artist": "Unknown Artist",
+    "album": "Sonic Uploads",
+    "duration": 0,
+    "coverUrl": "",
+    "audioUrl": "http://localhost:4000/uploads/ea6e1299-abdb-4ff7-894c-8c16a90a675b.mp3",
+    "source": "UPLOAD"
   }
 ]

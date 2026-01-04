@@ -44,7 +44,7 @@ export default function UploadModal({ isOpen, onClose, onUploadSuccess }: Upload
         formData.append('artist', artist);
 
         try {
-            const res = await fetch('http://localhost:4000/music/upload', {
+            const res = await fetch('/music/upload', {
                 method: 'POST',
                 body: formData,
             });

@@ -64,8 +64,8 @@ export default function Hero() {
                 }}
             >
                 {/* Glitch Effect Name */}
-                <motion.div variants={itemVariants} className="mb-6">
-                    <h1 className="text-8xl md:text-9xl font-bold mb-4 relative glitch-text" data-text="Saswata Dey">
+                <motion.div variants={itemVariants} className="mb-4 md:mb-6">
+                    <h1 className="text-5xl md:text-8xl lg:text-9xl font-bold mb-4 relative glitch-text" data-text="Saswata Dey">
                         <span className="gradient-text">Saswata Dey</span>
                         <span className="absolute inset-0 gradient-text opacity-50 blur-sm animate-pulse">
                             Saswata Dey
@@ -76,7 +76,7 @@ export default function Hero() {
                 {/* Tagline */}
                 <motion.p
                     variants={itemVariants}
-                    className="text-xl md:text-2xl text-[var(--text-secondary)] mb-4 font-light flex items-center justify-center gap-3 flex-wrap"
+                    className="text-lg md:text-2xl text-[var(--text-secondary)] mb-4 font-light flex items-center justify-center gap-2 md:gap-3 flex-wrap px-4"
                 >
                     <span>QA-Focused Engineer</span>
                     <span className="text-[var(--neon-blue)]">•</span>
@@ -103,15 +103,15 @@ export default function Hero() {
                 {/* CTA Buttons */}
                 <motion.div
                     variants={itemVariants}
-                    className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+                    className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center px-4"
                 >
                     <a
                         href="https://teestate-7531.myshopify.com/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group relative px-8 py-4 bg-transparent border-2 border-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105"
+                        className="group relative px-6 py-3 md:px-8 md:py-4 w-full sm:w-auto text-center bg-transparent border-2 border-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105"
                     >
-                        <span className="relative z-10 text-white font-semibold flex items-center gap-2">
+                        <span className="relative z-10 text-white font-semibold flex items-center justify-center gap-2">
                             👕 Visit TeeState
                         </span>
                         <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" ></div>
@@ -123,9 +123,9 @@ export default function Hero() {
                     <a
                         href="/resume.pdf"
                         download
-                        className="group relative px-8 py-4 bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 neon-glow"
+                        className="group relative px-6 py-3 md:px-8 md:py-4 w-full sm:w-auto text-center bg-gradient-to-r from-[var(--neon-blue)] to-[var(--neon-purple)] rounded-full overflow-hidden transition-all duration-300 hover:scale-105 neon-glow"
                     >
-                        <span className="relative z-10 text-white font-semibold flex items-center gap-2">
+                        <span className="relative z-10 text-white font-semibold flex items-center justify-center gap-2">
                             <svg
                                 className="w-5 h-5"
                                 fill="none"

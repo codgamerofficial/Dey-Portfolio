@@ -45,7 +45,7 @@ export default function SonicLink() {
                         </div>
                     </div>
 
-                    <h2 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
+                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 text-white leading-tight">
                         Sonic <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-l from-[var(--neon-purple)] to-white">Link</span>
                     </h2>

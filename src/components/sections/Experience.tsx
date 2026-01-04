@@ -65,7 +65,7 @@ export default function Experience() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-6xl font-bold mb-6">
                         <span className="gradient-text">Experience Timeline</span>
                     </h2>
                     <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">
@@ -76,7 +76,8 @@ export default function Experience() {
                 {/* Timeline */}
                 <div className="max-w-4xl mx-auto relative">
                     {/* Vertical Line */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[var(--neon-blue)] via-[var(--neon-purple)] to-[var(--neon-pink)]" />
+                    {/* Vertical Line */}
+                    <div className="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[var(--neon-blue)] via-[var(--neon-purple)] to-[var(--neon-pink)]" />
 
                     {/* Experience Cards */}
                     {experiences.map((exp, index) => (
@@ -95,7 +96,7 @@ export default function Experience() {
                                 whileInView={{ scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.3 + 0.2 }}
-                                className="absolute left-1/2 top-8 transform -translate-x-1/2 w-16 h-16 rounded-full flex items-center justify-center z-10"
+                                className="absolute left-4 md:left-1/2 top-8 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center z-10"
                                 style={{
                                     background: `${exp.color}20`,
                                     border: `3px solid ${exp.color}`,
@@ -117,7 +118,7 @@ export default function Experience() {
                                     y: -5,
                                     borderColor: exp.color
                                 }}
-                                className={`glass-strong rounded-3xl p-8 border-2 border-transparent transition-all duration-300 ${index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
+                                className={`glass-strong rounded-3xl p-6 md:p-8 border-2 border-transparent transition-all duration-300 ml-12 md:ml-0 ${index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
                                     }`}
                                 style={{
                                     borderColor: 'transparent',
